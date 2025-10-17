@@ -1,24 +1,9 @@
 <?php
-// ===========================================
-// CONFIGURACIÓN GLOBAL DEL SISTEMA
-// ===========================================
-
-// Dirección del servidor (si la BD está en el mismo servidor, usa 'localhost')
 define("DB_HOST", "localhost");
-
-// Nombre de la base de datos
 define("DB_NAME", "bd_ferreteria");
-
-// Usuario de la base de datos
 define("DB_USERNAME", "admin");
-
-// Contraseña del usuario de la base de datos
 define("DB_PASSWORD", "76960068");
-
-// Codificación de caracteres
-define("DB_ENCODE", "utf8");
-
-// Nombre del proyecto o sistema
-define("PRO_NOMBRE", "Sistema Ferretería");
-
+define("DB_CHARSET", "utf8mb4");
+define("DB_COLLATION", "utf8mb4_general_ci");
 ?>
+
