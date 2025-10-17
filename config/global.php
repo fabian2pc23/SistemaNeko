@@ -21,8 +21,4 @@ define("DB_ENCODE", "utf8");
 // Nombre del proyecto o sistema
 define("PRO_NOMBRE", "Sistema Ferretería");
 
-// ===============================
-// ZONA HORARIA (opcional pero recomendado)
-// ===============================
-date_default_timezone_set("America/Lima");
 ?>
