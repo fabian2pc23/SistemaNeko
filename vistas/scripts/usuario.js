@@ -19,6 +19,30 @@ function init(){
     $('#lUsuarios').addClass("active");
 }
 
+//FUNCION PARA VALIDACACION DE DOCUMENTO Y QUE INGRESE SOLO NUMEROS
+let tipo_documento = document.getElementById("tipo_documento");
+tipo_documento.addEventListener("click", function(){
+	let num_documento = document.getElementById("num_documento");
+	if(tipo_documento.value == "DNI"){
+		num_documento.setAttribute("maxlength", "8");
+		num_documento.setAttribute("placeholder", "Número de Documento");
+		num_documento.setAttribute("step", "1");
+	}else
+	if(tipo_documento.value == "RUC"){
+		num_documento.setAttribute("maxlength", "11");
+		num_documento.setAttribute("placeholder", "Número de RUC");
+		num_documento.setAttribute("step", "any");
+	}
+	else{
+		num_documento.setAttribute("maxlength", "20");
+		num_documento.setAttribute("placeholder", "Número de Documento");
+		num_documento.setAttribute("step", "any");
+	}
+});
+
+
+
+
 //Función limpiar
 function limpiar()
 {
