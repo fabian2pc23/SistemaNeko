@@ -82,20 +82,6 @@ $err  = curl_error($ch);
 $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
-/* DEMO si falla red/proveedor (para que puedas probar la UI) */
-if ($errn || $code < 200 || $code >= 300 || !$body) {
-  echo json_encode([
-    'success'        => true,
-    'ruc'            => $ruc,
-    'razon_social'   => 'EMPRESA DEMO S.A.C.',
-    'estado'         => 'ACTIVO',
-    'condicion'      => 'HABIDO',
-    'direccion'      => 'Av. Siempre Viva 123, Lima',
-    'ubigeo'         => '150101',
-  ]);
-  exit;
-}
-
 $j = json_decode($body, true);
 if (!is_array($j)) {
   http_response_code(502);
