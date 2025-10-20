@@ -96,6 +96,7 @@ if ($errn !== 0) {
   exit;
 }
 
+
 // 💥 Si la API devolvió HTML (token inválido, error del servidor, etc.)
 if (stripos($body, '<html') !== false || stripos($body, '<!DOCTYPE') !== false) {
   http_response_code(502);
