@@ -64,7 +64,7 @@ $url = "https://miapi.cloud/v1/dni/{$dni}";
 $ch  = curl_init($url);
 curl_setopt_array($ch, [
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_TIMEOUT        => 15,
+  CURLOPT_TIMEOUT        => 300,
   CURLOPT_FOLLOWLOCATION => true,
   CURLOPT_SSL_VERIFYPEER => true,
   CURLOPT_HTTPHEADER     => [
