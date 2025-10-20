@@ -1,12 +1,11 @@
 <?php
-// ajax/sunat.php
-
-// --- INICIO: CONFIGURACIÓN DE ERRORES Y TIEMPO (Solo se necesitan una vez) ---
 declare(strict_types=1);
-set_time_limit(60); // Establece el límite de tiempo de PHP a 60 segundos
-ini_set('display_errors', '1'); // Muestra errores en la salida
-error_reporting(E_ALL); // Reporta todos los errores
-// --- FIN: CONFIGURACIÓN ---
+
+// --- CONFIGURACIÓN DE ERRORES Y TIEMPO ---
+set_time_limit(60); 
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+// --- FIN CONFIGURACIÓN ---
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -17,14 +16,12 @@ function build_address($dom): string {
   }
   if (!is_array($dom)) return '';
 
-  // Claves directas más comunes
   foreach (['direccion','domicilio_fiscal','domicilio','calle','via'] as $k) {
     if (!empty($dom[$k]) && is_string($dom[$k])) {
       return trim((string)$dom[$k]);
     }
   }
 
-  // Composición por partes si llega un objeto desglosado
   $parts = [];
   foreach ([
     'via','tipo_via','nombre_via','calle','avenida','jr',
@@ -34,7 +31,6 @@ function build_address($dom): string {
   }
   $dir = trim(implode(' ', $parts));
 
-  // Ubigeo desglosado
   $geo = [];
   foreach (['distrito','provincia','departamento'] as $k) {
     if (!empty($dom[$k])) $geo[] = trim((string)$dom[$k]);
@@ -54,19 +50,12 @@ if (strlen($ruc) !== 11) {
 
 /* ===== MODO DEMO SI NO HAY CURL (para probar UI sin red/token) ===== */
 if (!function_exists('curl_init')) {
-  echo json_encode([
-    'success'         => true,
-    'ruc'             => $ruc,
-    'razon_social'    => 'EMPRESA DEMO S.A.C.',
-    'estado'          => 'ACTIVO',
-    'condicion'       => 'HABIDO',
-    'direccion'       => 'Av. Siempre Viva 123, Lima',
-    'ubigeo'          => '150101',
-  ]);
+  http_response_code(500); // Dar un error 500 si falta CURL
+  echo json_encode(['success'=>false, 'message'=>'La extensión cURL de PHP no está instalada.']); 
   exit;
 }
 
-// TOKEN VÁLIDO (reemplazado por el nuevo)
+// TOKEN VÁLIDO
 $TOKEN = getenv('MIAPI_CLOUD_TOKEN')
   ?: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MDEsImV4cCI6MTc2MTU0MTQxMn0.5M179k5ws4tayquMwg_yfVdbybQCDkKaTPUu6Dibt_E';
 
@@ -90,13 +79,13 @@ $err  = curl_error($ch);
 $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
-// VERIFICACIÓN: Fallo de red (HTTP code 0) o fallo de la llamada (4xx/5xx)
+// Manejo de fallos de red o errores de la API (incluye el 401 del token viejo, si fuera el caso)
 if ($errn || $code < 200 || $code >= 300 || !$body) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => "ERROR de cURL/API: Falló la conexión o la API rechazó la solicitud.",
-        'details' => "cURL Error: {$err} (Cod: {$code}, ErrNo: {$errn})",
+        'details' => "cURL Error: {$err} (Cod. HTTP: {$code}, ErrNo: {$errn})",
         'body_received' => substr($body, 0, 100)
     ]);
     exit;
@@ -105,18 +94,17 @@ if ($errn || $code < 200 || $code >= 300 || !$body) {
 
 $j = json_decode($body, true);
 
-// *** CÓDIGO TEMPORAL DE DEPURACIÓN DE JSON ***
+// Manejo de fallos de JSON (si la API devolvió algo que no es JSON)
 if (json_last_error() !== JSON_ERROR_NONE) {
   http_response_code(500);
   echo json_encode([
     'success' => false,
-    'message' => "ERROR FATAL: El cuerpo no es JSON válido o el script falló.",
-    'error_php_msg' => json_last_error_msg(), // Muestra el error de JSON
-    'body_raw' => substr($body, 0, 100) // Muestra el inicio del cuerpo recibido
+    'message' => "ERROR FATAL: El cuerpo no es JSON válido.",
+    'error_php_msg' => json_last_error_msg(), 
+    'body_raw' => substr($body, 0, 100)
   ]);
   exit;
 }
-// *** FIN CÓDIGO DEPURACIÓN ***
 
 
 if (!is_array($j)) {
@@ -124,7 +112,6 @@ if (!is_array($j)) {
   echo json_encode(['success'=>false,'message'=>'Respuesta inválida del proveedor.']); exit;
 }
 
-/* Formato típico miapi.cloud: ... */
 
 if (!($j['success'] ?? false) || empty($j['datos']) || !is_array($j['datos'])) {
   http_response_code(404);
