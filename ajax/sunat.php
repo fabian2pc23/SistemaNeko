@@ -81,7 +81,9 @@ $body = curl_exec($ch);
 $errn = curl_errno($ch);
 $err  = curl_error($ch);
 $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+file_put_contents('/tmp/debug_miapi.txt', "HTTP: {$code}\nErrNo: {$errn}\nError: {$err}\nBody:\n{$body}\n");
 curl_close($ch);
+
 
 // --- MANEJO DE ERRORES CURL / TOKEN / API ---
 
