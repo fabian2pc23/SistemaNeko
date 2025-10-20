@@ -43,6 +43,7 @@ $canAlmacen = !empty($_SESSION['almacen']) && (int)$_SESSION['almacen'] === 1;
                   <th>Categoría</th>
                   <th>Código</th>
                   <th>Stock</th>
+                  <th>Precio Venta</th>
                   <th>Imagen</th>
                   <th>Estado</th>
                 </thead>
@@ -53,6 +54,7 @@ $canAlmacen = !empty($_SESSION['almacen']) && (int)$_SESSION['almacen'] === 1;
                   <th>Categoría</th>
                   <th>Código</th>
                   <th>Stock</th>
+                  <th>Precio Venta</th>
                   <th>Imagen</th>
                   <th>Estado</th>
                 </tfoot>
@@ -75,6 +77,11 @@ $canAlmacen = !empty($_SESSION['almacen']) && (int)$_SESSION['almacen'] === 1;
                 <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <label>Stock(*):</label>
                   <input type="number" class="form-control" name="stock" id="stock" required>
+                </div> 
+
+                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                  <label>Precio_venta(*):</label>
+                  <input type="text" class="form-control" name="precio_venta" id="precio_venta" required>
                 </div>
 
                 <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-12">
