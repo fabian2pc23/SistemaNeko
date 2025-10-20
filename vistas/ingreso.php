@@ -163,23 +163,27 @@ if ($canCompras) {
       </div>
       <div class="modal-body table-responsive">
         <table id="tblarticulos" class="table table-striped table-bordered table-condensed table-hover">
-          <thead>
-            <th>Opciones</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Código</th>
-            <th>Stock</th>
-            <th>Imagen</th>
-          </thead>
-          <tbody></tbody>
-          <tfoot>
-            <th>Opciones</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Código</th>
-            <th>Stock</th>
-            <th>Imagen</th>
-          </tfoot>
+            <thead>
+                <th>Opciones</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Código</th>
+                <th>Stock</th>
+                <th>Precio Venta</th>
+                <th>Imagen</th>
+            </thead>
+            <tbody>
+              
+            </tbody>
+            <tfoot>
+              <th>Opciones</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Código</th>
+                <th>Stock</th>
+                <th>Precio Venta</th>
+                <th>Imagen</th>
+            </tfoot>
         </table>
       </div>
       <div class="modal-footer">
@@ -201,3 +205,4 @@ require 'footer.php';
 <script type="text/javascript" src="scripts/ingreso.js"></script>
 <?php
 ob_end_flush();
+
