@@ -4,6 +4,18 @@ ini_set('display_errors', '1');
 error_reporting(E_ALL); 
 // FIN AGREGADO
 // ajax/sunat.php
+
+
+// Establecer el tiempo de ejecución en 60 segundos (el valor por defecto es 30)
+set_time_limit(60); 
+
+// OTRA PRUEBA CRUCIAL: Mantenemos el modo de error activado
+ini_set('display_errors', '1'); 
+error_reporting(E_ALL); 
+
+// ajax/sunat.php
+declare(strict_types=1);
+// ...
 declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 
