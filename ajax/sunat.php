@@ -82,6 +82,7 @@ $err  = curl_error($ch);
 $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
+
 $j = json_decode($body, true);
 
 // *** CÓDIGO TEMPORAL DE DEPURACIÓN AGREGADO ***
@@ -89,13 +90,12 @@ if (json_last_error() !== JSON_ERROR_NONE) {
   http_response_code(500);
   echo json_encode([
     'success' => false, 
-    'message' => "ERROR FATAL: El cuerpo no es JSON válido.",
-    'error_php' => json_last_error_msg(),
-    'body_raw' => $body
+    'message' => "ERROR FATAL: El cuerpo no es JSON válido o el script falló.",
+    'error_php_msg' => json_last_error_msg(), // Muestra el error de JSON
+    'body_raw' => substr($body, 0, 100) // Muestra el inicio del cuerpo recibido
   ]);
   exit;
 }
-// *** FIN CÓDIGO DEPURACIÓN ***
 
 
 if (!is_array($j)) {
