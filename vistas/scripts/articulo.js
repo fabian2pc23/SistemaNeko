@@ -28,6 +28,7 @@ function limpiar()
 	$("#nombre").val("");
 	$("#descripcion").val("");
 	$("#stock").val("");
+	$("#precio_venta").val("");
 	$("#imagenmuestra").attr("src","");
 	$("#imagenactual").val("");
 	$("#print").hide();
@@ -137,6 +138,7 @@ function mostrar(idarticulo)
 		$("#codigo").val(data.codigo);
 		$("#nombre").val(data.nombre);
 		$("#stock").val(data.stock);
+		$("#precio_venta").val(data.precio_venta);
 		$("#descripcion").val(data.descripcion);
 		$("#imagenmuestra").show();
 		$("#imagenmuestra").attr("src","../files/articulos/"+data.imagen);
