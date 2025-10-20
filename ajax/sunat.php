@@ -83,10 +83,27 @@ $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 $j = json_decode($body, true);
+
+// *** CÓDIGO TEMPORAL DE DEPURACIÓN AGREGADO ***
+if (json_last_error() !== JSON_ERROR_NONE) {
+  http_response_code(500);
+  echo json_encode([
+    'success' => false, 
+    'message' => "ERROR FATAL: El cuerpo no es JSON válido.",
+    'error_php' => json_last_error_msg(),
+    'body_raw' => $body
+  ]);
+  exit;
+}
+// *** FIN CÓDIGO DEPURACIÓN ***
+
+
 if (!is_array($j)) {
   http_response_code(502);
   echo json_encode(['success'=>false,'message'=>'Respuesta inválida del proveedor.']); exit;
 }
+
+// ... el resto del código ...
 
 /* Formato típico miapi.cloud:
 {
