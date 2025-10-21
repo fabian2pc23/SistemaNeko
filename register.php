@@ -1,7 +1,5 @@
 <?php
 
-echo "✅ Debug activo<br>";
-
 // src/register.php
 declare(strict_types=1);
 
