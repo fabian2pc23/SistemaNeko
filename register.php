@@ -78,8 +78,6 @@ $loginU        = trim($_POST['login'] ?? '');
 // NUEVOS CAMPOS
 $telefono      = trim($_POST['telefono'] ?? '');
 $direccion     = trim($_POST['direccion'] ?? '');
-var_dump($_POST);
-exit;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? '';
