@@ -1,8 +1,4 @@
 <?php
-ini_set('log_errors', 1);
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
-ini_set('error_log', '/var/www/html/php_errors.log');
 
 // src/register.php
 declare(strict_types=1);
