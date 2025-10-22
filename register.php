@@ -7,61 +7,65 @@ require_once __DIR__ . '/includes/db.php';
 $error   = '';
 $success = '';
 
+// ------------------------
+// Validaciones
+// ------------------------
 function validar_dni(string $doc): bool { return (bool)preg_match('/^[0-9]{8}$/', $doc); }
 function validar_ruc(string $doc): bool {
-  if (!preg_match('/^[0-9]{11}$/', $doc)) return false;
-  $factors = [5,4,3,2,7,6,5,4,3,2];
-  $sum = 0;
-  for ($i=0; $i<10; $i++) { $sum += ((int)$doc[$i]) * $factors[$i]; }
-  $resto  = $sum % 11;
-  $digito = 11 - $resto;
-  if ($digito === 10) $digito = 0;
-  elseif ($digito === 11) $digito = 1;
-  return $digito === (int)$doc[10];
+    if (!preg_match('/^[0-9]{11}$/', $doc)) return false;
+    $factors = [5,4,3,2,7,6,5,4,3,2];
+    $sum = 0;
+    for ($i=0; $i<10; $i++) { $sum += ((int)$doc[$i]) * $factors[$i]; }
+    $resto  = $sum % 11;
+    $digito = 11 - $resto;
+    if ($digito === 10) $digito = 0;
+    elseif ($digito === 11) $digito = 1;
+    return $digito === (int)$doc[10];
 }
 function validar_pasaporte(string $doc): bool { return (bool)preg_match('/^[A-Za-z0-9]{9,12}$/', $doc); }
 
-/** Valida contraseña robusta */
 function validar_password_robusta(
-  string $pwd,
-  string $login = '',
-  string $email = '',
-  string $nombres = '',
-  string $apellidos = ''
+    string $pwd,
+    string $login = '',
+    string $email = '',
+    string $nombres = '',
+    string $apellidos = ''
 ): ?string {
-  if (strlen($pwd) < 10 || strlen($pwd) > 64) return 'La contraseña debe tener entre 10 y 64 caracteres.';
-  if (preg_match('/\s/', $pwd)) return 'La contraseña no debe contener espacios.';
-  if (!preg_match('/[A-Z]/', $pwd)) return 'Debe incluir al menos una letra mayúscula (A-Z).';
-  if (!preg_match('/[a-z]/', $pwd)) return 'Debe incluir al menos una letra minúscula (a-z).';
-  if (!preg_match('/[0-9]/', $pwd)) return 'Debe incluir al menos un dígito (0-9).';
-  if (!preg_match('/[!@#$%^&*()_\+\=\-\[\]{};:,.?]/', $pwd)) return 'Debe incluir al menos un caracter especial: !@#$%^&*()_+=-[]{};:,.?';
+    if (strlen($pwd) < 10 || strlen($pwd) > 64) return 'La contraseña debe tener entre 10 y 64 caracteres.';
+    if (preg_match('/\s/', $pwd)) return 'La contraseña no debe contener espacios.';
+    if (!preg_match('/[A-Z]/', $pwd)) return 'Debe incluir al menos una letra mayúscula (A-Z).';
+    if (!preg_match('/[a-z]/', $pwd)) return 'Debe incluir al menos una letra minúscula (a-z).';
+    if (!preg_match('/[0-9]/', $pwd)) return 'Debe incluir al menos un dígito (0-9).';
+    if (!preg_match('/[!@#$%^&*()_\+\=\-\[\]{};:,.?]/', $pwd)) return 'Debe incluir al menos un caracter especial: !@#$%^&*()_+=-[]{};:,.?';
 
-  $lowerPwd = mb_strtolower($pwd, 'UTF-8');
-  $prohibidos = [];
-  if ($login) $prohibidos[] = mb_strtolower($login, 'UTF-8');
-  if ($email) { $local = mb_strtolower((string)strtok($email, '@'), 'UTF-8'); if ($local) $prohibidos[] = $local; }
-  foreach (preg_split('/\s+/', trim($nombres . ' ' . $apellidos)) as $pieza) {
-    $pieza = mb_strtolower($pieza, 'UTF-8');
-    if (mb_strlen($pieza, 'UTF-8') >= 4) $prohibidos[] = $pieza;
-  }
-  foreach ($prohibidos as $p) {
-    if ($p !== '' && mb_strpos($lowerPwd, $p, 0, 'UTF-8') !== false) {
-      return 'No debe contener partes de tu usuario, correo, nombres o apellidos.';
+    $lowerPwd = mb_strtolower($pwd, 'UTF-8');
+    $prohibidos = [];
+    if ($login) $prohibidos[] = mb_strtolower($login, 'UTF-8');
+    if ($email) { $local = mb_strtolower((string)strtok($email, '@'), 'UTF-8'); if ($local) $prohibidos[] = $local; }
+    foreach (preg_split('/\s+/', trim($nombres . ' ' . $apellidos)) as $pieza) {
+        $pieza = mb_strtolower($pieza, 'UTF-8');
+        if (mb_strlen($pieza, 'UTF-8') >= 4) $prohibidos[] = $pieza;
     }
-  }
+    foreach ($prohibidos as $p) {
+        if ($p !== '' && mb_strpos($lowerPwd, $p, 0, 'UTF-8') !== false) {
+            return 'No debe contener partes de tu usuario, correo, nombres o apellidos.';
+        }
+    }
 
-  $comunes = ['123456','123456789','12345678','12345','qwerty','password','111111','abc123','123123','iloveyou','admin','welcome','monkey','dragon','qwertyuiop','000000'];
-  if (in_array(mb_strtolower($pwd, 'UTF-8'), $comunes, true)) return 'La contraseña es demasiado común. Elige otra.';
-  return null;
+    $comunes = ['123456','123456789','12345678','12345','qwerty','password','111111','abc123','123123','iloveyou','admin','welcome','monkey','dragon','qwertyuiop','000000'];
+    if (in_array(mb_strtolower($pwd, 'UTF-8'), $comunes, true)) return 'La contraseña es demasiado común. Elige otra.';
+    return null;
 }
 
+// ------------------------
 // Catálogos
+// ------------------------
 $tiposDoc = $pdo->query('SELECT id_tipodoc, nombre FROM tipo_documento ORDER BY id_tipodoc')->fetchAll();
+$roles    = $pdo->query('SELECT id_rol, nombre FROM rol_usuarios WHERE estado = 1 ORDER BY id_rol')->fetchAll();
 
-// ⭐ CAMBIO: Solo roles públicos (excluir Admin = id_rol 1)
-$roles = $pdo->query('SELECT id_rol, nombre FROM rol_usuarios WHERE estado = 1 AND id_rol != 1 ORDER BY id_rol')->fetchAll();
-
-// Valores del form
+// ------------------------
+// Valores del formulario
+// ------------------------
 $id_tipodoc    = (int)($_POST['id_tipodoc'] ?? 0);
 $id_rol        = (int)($_POST['id_rol'] ?? 0);
 $nro_documento = trim($_POST['nro_documento'] ?? '');
@@ -73,102 +77,102 @@ $loginU        = trim($_POST['login'] ?? '');
 $telefono      = trim($_POST['telefono'] ?? '');
 $direccion     = trim($_POST['direccion'] ?? '');
 
+// ------------------------
+// Procesamiento POST
+// ------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $password = $_POST['password'] ?? '';
-  $confirm  = $_POST['confirm'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm  = $_POST['confirm'] ?? '';
 
-  // Validación básica
-  if (!$id_tipodoc || !$id_rol || !$nro_documento || !$email || !$loginU || !$password || !$confirm) {
-    $error = 'Todos los campos obligatorios deben ser completados.';
-  } 
-  // ⭐ SEGURIDAD: Prevenir que se intente registrar como Admin (id_rol = 1)
-  elseif ($id_rol === 1) {
-    $error = 'No puedes registrarte con ese rol. Contacta al administrador.';
-  }
-  elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $error = 'El correo no es válido.';
-  } elseif ($password !== $confirm) {
-    $error = 'Las contraseñas no coinciden.';
-  } else {
-    // Validar documento por tipo
-    $okDoc = false;
-    if     ($id_tipodoc === 1) $okDoc = validar_dni($nro_documento);
-    elseif ($id_tipodoc === 2) $okDoc = validar_ruc($nro_documento);
-    elseif ($id_tipodoc === 3) $okDoc = validar_pasaporte($nro_documento);
-
-    if (!$okDoc) {
-      $error = 'Número de documento inválido para el tipo seleccionado.';
+    if (!$id_tipodoc || !$id_rol || !$nro_documento || !$email || !$loginU || !$password || !$confirm) {
+        $error = 'Todos los campos son obligatorios.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'El correo no es válido.';
+    } elseif ($password !== $confirm) {
+        $error = 'Las contraseñas no coinciden.';
     } else {
-      // Ajuste de nombres según tipo
-      if ($id_tipodoc === 2) { // RUC
-        if ($empresa === '') {
-          $error = 'La razón social no fue completada. Usa el autocompletado por SUNAT.';
+        // Validar doc por tipo
+        $okDoc = false;
+        if ($id_tipodoc === 1) $okDoc = validar_dni($nro_documento);
+        elseif ($id_tipodoc === 2) $okDoc = validar_ruc($nro_documento);
+        elseif ($id_tipodoc === 3) $okDoc = validar_pasaporte($nro_documento);
+
+        if (!$okDoc) {
+            $error = 'Número de documento inválido para el tipo seleccionado.';
         } else {
-          $nombres   = $empresa;
-          $apellidos = '';
-        }
-      } else {
-        // DNI o Pasaporte
-        if ($nombres === '' || $apellidos === '') {
-          $error = 'Nombres y apellidos son obligatorios (usa el autocompletado).';
-        }
-      }
+            // Ajuste de nombres según tipo
+            if ($id_tipodoc === 2) { // RUC
+                if ($empresa === '') {
+                    $error = 'La razón social no fue completada. Usa el autocompletado por SUNAT.';
+                } else {
+                    $nombres   = $empresa;
+                    $apellidos = '';
+                }
+            } else {
+                if ($nombres === '' || $apellidos === '') {
+                    $error = 'Nombres y apellidos son obligatorios.';
+                }
+            }
 
-      // Validación telefono/direccion
-      if ($error === '') {
-        if ($telefono !== '' && !preg_match('/^[0-9+\-\s]{6,20}$/', $telefono)) {
-          $error = 'Teléfono no válido.';
-        } elseif ($direccion !== '' && mb_strlen($direccion, 'UTF-8') > 70) {
-          $error = 'Dirección demasiado larga (máx 70).';
-        }
-      }
+            // Validación ligera de teléfono/dirección
+            if ($error === '') {
+                if ($telefono !== '' && !preg_match('/^[0-9+\-\s]{6,20}$/', $telefono)) {
+                    $error = 'Teléfono no válido.';
+                } elseif ($direccion !== '' && mb_strlen($direccion, 'UTF-8') > 70) {
+                    $error = 'Dirección demasiado larga (máx 70).';
+                }
+            }
 
-      // Validación contraseña robusta
-      if ($error === '') {
-        $errPwd = validar_password_robusta($password, $loginU, $email, $nombres, $apellidos);
-        if ($errPwd !== null) {
-          $error = $errPwd;
-        }
-      }
+            // Validación de contraseña
+            if ($error === '') {
+                $errPwd = validar_password_robusta($password, $loginU, $email, $nombres, $apellidos);
+                if ($errPwd !== null) $error = $errPwd;
+            }
 
-      if ($error === '') {
-        // Verificar duplicados
-        $dup = $pdo->prepare('
-          SELECT 1
-          FROM usuario
-          WHERE email = ?
-             OR login = ?
-             OR (id_tipodoc = ? AND num_documento = ?)
-          LIMIT 1
-        ');
-        $dup->execute([$email, $loginU, $id_tipodoc, $nro_documento]);
-        if ($dup->fetch()) {
-          $error = 'El email, usuario o documento ya está registrado.';
-        } else {
-          $hash = hash('sha256', $password);
-          $nombreFinal = ($id_tipodoc === 2) ? $empresa : trim($nombres . ' ' . $apellidos);
+            // ------------------------
+            // Inserción en BD
+            // ------------------------
+            if ($error === '') {
+                // Revisar duplicados
+                $dup = $pdo->prepare('
+                    SELECT 1 FROM usuario
+                    WHERE email = ? OR login = ? OR (id_tipodoc = ? AND num_documento = ?)
+                    LIMIT 1
+                ');
+                $dup->execute([$email, $loginU, $id_tipodoc, $nro_documento]);
 
-          // Inserción en BD
-          $ins = $pdo->prepare('
-            INSERT INTO usuario
-              (id_tipodoc, num_documento, id_rol, nombre, email, login, clave, telefono, direccion, condicion)
-            VALUES
-              (?,          ?,              ?,      ?,      ?,     ?,     ?,     ?,        ?,         1)
-          ');
-          if ($ins->execute([$id_tipodoc, $nro_documento, $id_rol, $nombreFinal, $email, $loginU, $hash, $telefono, $direccion])) {
-            $success = 'Registro exitoso. Ahora puedes iniciar sesión.';
-            // Limpiar variables
-            $id_tipodoc = $id_rol = 0;
-            $nro_documento = $nombres = $apellidos = $empresa = $email = $loginU = $telefono = $direccion = '';
-          } else {
-            $error = 'Error al registrar. Intenta nuevamente.';
-          }
+                if ($dup->fetch()) {
+                    $error = 'El email, usuario o documento ya está registrado.';
+                } else {
+                    $hash = hash('sha256', $password);
+                    $nombreFinal = ($id_tipodoc === 2) ? $empresa : trim($nombres . ' ' . $apellidos);
+
+                    // Campos opcionales
+                    $tipo_documento = ''; // vacío si no se proporciona
+                    $imagen         = ''; // vacío si no se proporciona
+
+                    $ins = $pdo->prepare('
+                        INSERT INTO usuario
+                            (id_tipodoc, tipo_documento, num_documento, id_rol, nombre, email, login, clave, telefono, direccion, imagen, condicion)
+                        VALUES
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                    ');
+
+                    if ($ins->execute([$id_tipodoc, $tipo_documento, $nro_documento, $id_rol, $nombreFinal, $email, $loginU, $hash, $telefono, $direccion, $imagen])) {
+                        $success = 'Registro exitoso. Ahora puedes iniciar sesión.';
+                        // Limpiar campos
+                        $id_tipodoc = $id_rol = 0;
+                        $nro_documento = $nombres = $apellidos = $empresa = $email = $loginU = $telefono = $direccion = '';
+                    } else {
+                        $error = 'Error al registrar. Intenta nuevamente.';
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
