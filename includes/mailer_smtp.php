@@ -28,7 +28,7 @@ const SMTP_PROVIDER = 'gmail';
 const GMAIL_USERNAME     = 'nekosaccix@gmail.com';
 const GMAIL_APP_PASSWORD = 'ittsmjryvyjpckxp';
 
-/** OUTLOOK/HOTMAIL (habilita “Authenticated SMTP” o usa App Password si tienes MFA) */
+/** OUTLOOK/HOTMAIL (habilita "Authenticated SMTP" o usa App Password si tienes MFA) */
 const OUTLOOK_USERNAME = 'tu_correo@outlook.com';
 const OUTLOOK_PASSWORD = 'TU_PASSWORD_O_APP_PASSWORD';
 
@@ -115,13 +115,47 @@ function send_mail_smtp(string $to, string $toName, string $subject, string $htm
 function sendAuthCode(string $toEmail, string $otp): bool {
     $subject = 'Tu código de verificación (OTP)';
     $html = "
-        <p>Hola,</p>
-        <p>Tu código de verificación es:</p>
-        <h2 style='font-family:monospace;letter-spacing:4px;text-align:center;margin:16px 0;'>{$otp}</h2>
-        <p>Este código expira en 10 minutos.</p>
-        <p>Si no fuiste tú, ignora este mensaje.</p>
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;'>
+            <h2 style='color: #333; text-align: center;'>Código de Verificación</h2>
+            <p>Hola,</p>
+            <p>Tu código de verificación es:</p>
+            <div style='background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; border-radius: 5px;'>
+                {$otp}
+            </div>
+            <p>Este código expira en 10 minutos.</p>
+            <p style='color: #666; font-size: 12px; margin-top: 30px;'>Si no fuiste tú, ignora este mensaje.</p>
+        </div>
     ";
     [$ok, $err] = send_mail_smtp($toEmail, '', $subject, $html);
     if (!$ok) { error_log('OTP MAIL ERROR: ' . $err); }
+    return $ok;
+}
+
+/**
+ * Helper para enviar correo de recuperación de contraseña
+ */
+function sendPasswordResetEmail(string $toEmail, string $userName, string $resetUrl): bool {
+    $subject = 'Recuperación de contraseña - Neko SAC';
+    $html = "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;'>
+            <h2 style='color: #333;'>Recuperación de contraseña</h2>
+            <p>Hola <strong>{$userName}</strong>,</p>
+            <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en Neko SAC.</p>
+            <p>Haz clic en el siguiente botón para crear una nueva contraseña:</p>
+            <div style='text-align: center; margin: 30px 0;'>
+                <a href='{$resetUrl}' style='background: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>
+                    Restablecer contraseña
+                </a>
+            </div>
+            <p>O copia y pega este enlace en tu navegador:</p>
+            <p style='background: #f4f4f4; padding: 10px; word-break: break-all; font-size: 12px; border-radius: 3px;'>{$resetUrl}</p>
+            <p style='color: #666; margin-top: 20px;'>Este enlace expirará en 1 hora por seguridad.</p>
+            <hr style='border: none; border-top: 1px solid #eee; margin: 30px 0;'>
+            <p style='color: #999; font-size: 12px;'>Si no solicitaste este cambio, ignora este mensaje. Tu contraseña no será modificada.</p>
+            <p style='color: #999; font-size: 12px;'>Este es un correo automático, por favor no respondas a este mensaje.</p>
+        </div>
+    ";
+    [$ok, $err] = send_mail_smtp($toEmail, $userName, $subject, $html);
+    if (!$ok) { error_log('PASSWORD RESET MAIL ERROR: ' . $err); }
     return $ok;
 }
