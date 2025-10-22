@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/global.php";
 
+$conexion = @new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
 if ($conexion->connect_errno) {
     die("❌ Error de conexión ({$conexion->connect_errno}): {$conexion->connect_error}");
