@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </label>
 
           <div class="row-between">
-            <a class="link-muted" href="#">¿Olvidaste tu contraseña?</a>
+            <a class="link-muted" href="forgot_password.php">¿Olvidaste tu contraseña?</a>
           </div>
 
           <button type="submit" class="btn btn-primary w-full">Login</button>
