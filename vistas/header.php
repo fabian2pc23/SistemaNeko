@@ -21,7 +21,7 @@ function flag($k){ return !empty($_SESSION[$k]) && (int)$_SESSION[$k] === 1; }
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Ferretería Neko | www.crisdava.com</title>
+    <title>Ferretería Neko | www.FerreteriaNeko.com</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <!-- CSS -->
@@ -63,8 +63,7 @@ function flag($k){ return !empty($_SESSION[$k]) && (int)$_SESSION[$k] === 1; }
                   <li class="user-header">
                     <img src="../files/usuarios/<?= $sesImagen ?>" class="img-circle" alt="User Image">
                     <p>
-                      www.crisdava.com - Desarrollando Software
-                      <small>https://www.youtube.com/@CristianDavila2002</small>
+                      www.FerreteriaNeko.com - Desarrollando Software
                     </p>
                   </li>
                   <li class="user-footer">
