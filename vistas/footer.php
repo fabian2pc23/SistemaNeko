@@ -2,7 +2,7 @@
         <div class="pull-right hidden-xs">
           <b>Version</b> 3.0.0
         </div>
-        <strong>Copyright &copy; 2025-2025 <a href="www.crisdava.com">CrisdavaIT</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2025-2025 <a href="www.FerreteriaNeko.com">CrisdavaIT</a>.</strong> All rights reserved.
     </footer>    
     <!-- jQuery -->
     <script src="../public/js/jquery-3.1.1.min.js"></script>
