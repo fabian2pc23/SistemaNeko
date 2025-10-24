@@ -62,9 +62,7 @@ $canCompras = !empty($_SESSION['compras']) && (int)$_SESSION['compras'] === 1;
               <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <label>Tipo Documento:</label>
                 <select class="form-control selectpicker" name="tipo_documento" id="tipo_documento" required>
-                  <option value="DNI" selected>DNI</option>
                   <option value="RUC">RUC</option>
-                  <option value="CEDULA">CÉDULA</option>
                 </select>
               </div>
 
@@ -72,7 +70,7 @@ $canCompras = !empty($_SESSION['compras']) && (int)$_SESSION['compras'] === 1;
                 <label>Número Documento:</label>
                 <input type="text" class="form-control" name="num_documento" id="num_documento"
                        placeholder="Documento" required>
-                <small id="ayuda_doc" class="text-muted">DNI: 8 dígitos · RUC: 11 dígitos</small>
+                <small id="ayuda_doc" class="text-muted">RUC: 11 dígitos</small>
               </div>
 
               <!-- Fila 2: Nombre (autocompletado) + Dirección (autocompletada) -->
