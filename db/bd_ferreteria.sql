@@ -609,4 +609,7 @@ CREATE TABLE `password_reset` (
   KEY `idx_user` (`user_id`),
   KEY `idx_expires` (`expires_at`),
   CONSTRAINT `fk_reset_usuario` FOREIGN KEY (`user_id`) REFERENCES `usuario` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+
+ALTER TABLE persona
+ADD UNIQUE KEY uniq_proveedor_doc (tipo_persona, num_documento);

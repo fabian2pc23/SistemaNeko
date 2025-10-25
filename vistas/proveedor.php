@@ -126,4 +126,6 @@ require 'footer.php';
 ?>
 <script type="text/javascript" src="scripts/proveedor.js"></script>
 <?php
-ob_end_flush();
+ob_end_flush(); 
+
+//actualizacion de provvedor

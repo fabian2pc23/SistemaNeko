@@ -110,4 +110,6 @@ require 'footer.php';
 <?php 
 }
 ob_end_flush();
+//actualizacion de cliente.php
 ?>
+
